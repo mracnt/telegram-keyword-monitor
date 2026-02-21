@@ -32,11 +32,14 @@ async def monitor(event):
         if kw.lower() in text.lower():
             chat = await event.get_chat()
             chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
-            await bot_client.send_message(MY_ID, (
-                f"🔔 *Keyword trovata:* `{kw}`\n"
-                f"📢 *Canale:* {chat_name}\n\n"
-                f"{text[:500]}"
-            ), parse_mode='markdown')
+            try:
+                await bot_client.send_message(MY_ID, (
+                    f"🔔 *Keyword trovata:* `{kw}`\n"
+                    f"📢 *Canale:* {chat_name}\n\n"
+                    f"{text[:500]}"
+                ), parse_mode='markdown')
+            except Exception as e:
+                print(f"Errore invio messaggio: {e}")
 
 @bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/add (.+)'))
 async def add_keyword(event):
