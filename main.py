@@ -1,5 +1,4 @@
-python3 << 'PYEOF'
-content = '''import asyncio
+import asyncio
 import json
 import os
 from telethon import TelegramClient, events
@@ -28,18 +27,18 @@ bot_client = TelegramClient('bot', API_ID, API_HASH)
 
 @user_client.on(events.NewMessage)
 async def monitor(event):
-    text = event.message.text or ""
+    text = event.message.text or ''
     for kw in keywords:
         if kw.lower() in text.lower():
             chat = await event.get_chat()
-            chat_name = getattr(chat, "title", getattr(chat, "username", "Sconosciuto"))
+            chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
             await bot_client.send_message(MY_ID, (
-                f"🔔 *Keyword trovata:* `{kw}`\\n"
-                f"📢 *Canale:* {chat_name}\\n\\n"
+                f"🔔 *Keyword trovata:* `{kw}`\n"
+                f"📢 *Canale:* {chat_name}\n\n"
                 f"{text[:500]}"
-            ), parse_mode="markdown")
+            ), parse_mode='markdown')
 
-@bot_client.on(events.NewMessage(from_users=MY_ID, pattern="/add (.+)"))
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/add (.+)'))
 async def add_keyword(event):
     kw = event.pattern_match.group(1).strip()
     if kw not in keywords:
@@ -47,9 +46,9 @@ async def add_keyword(event):
         save_keywords(keywords)
         await event.reply(f"✅ Keyword `{kw}` aggiunta!")
     else:
-        await event.reply(f"⚠️ `{kw}` e già presente!")
+        await event.reply(f"⚠️ `{kw}` è già presente!")
 
-@bot_client.on(events.NewMessage(from_users=MY_ID, pattern="/remove (.+)"))
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/remove (.+)'))
 async def remove_keyword(event):
     kw = event.pattern_match.group(1).strip()
     if kw in keywords:
@@ -59,11 +58,11 @@ async def remove_keyword(event):
     else:
         await event.reply(f"⚠️ `{kw}` non trovata!")
 
-@bot_client.on(events.NewMessage(from_users=MY_ID, pattern="/list"))
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/list'))
 async def list_keywords(event):
     if keywords:
-        kw_list = "\\n".join([f"• `{kw}`" for kw in keywords])
-        await event.reply(f"📋 *Keyword attive:*\\n{kw_list}", parse_mode="markdown")
+        kw_list = '\n'.join([f"• `{kw}`" for kw in keywords])
+        await event.reply(f"📋 *Keyword attive:*\n{kw_list}", parse_mode='markdown')
     else:
         await event.reply("📋 Nessuna keyword attiva.")
 
@@ -76,9 +75,4 @@ async def main():
         bot_client.run_until_disconnected()
     )
 
-asyncio.run(main())'''
-
-with open('main.py', 'w') as f:
-    f.write(content)
-print("File scritto:", len(content), "caratteri")
-PYEOF
+asyncio.run(main())
