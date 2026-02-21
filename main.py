@@ -27,11 +27,15 @@ keywords = load_keywords()
 user_client = TelegramClient('sessione', API_ID, API_HASH)
 bot_client = TelegramClient('bot', API_ID, API_HASH)
 
+BOT_ID = int(os.environ.get('BOT_ID', 0))
+
 @user_client.on(events.NewMessage)
 async def monitor(event):
     if START_TIME is None:
         return
     if event.out or event.is_private:
+        return
+    if event.sender_id == BOT_ID:
         return
     msg_time = event.date.timestamp()
     if msg_time < START_TIME:
