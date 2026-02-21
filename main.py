@@ -69,15 +69,23 @@ async def remove_keyword(event):
     else:
         await event.reply(kw + " non trovata!")
 
-@bot_client.on(events.NewMessage(from_users=    if event.sender_id == BOT_ID:
-        return
-    msg_time = event.date.timestamp()
-    if msg_time < START_TIME:
-        return
-    text = event.message.text or ''
-    for kw in keywords:
-        if kw.lower() in text.lower():
-            chat = await event.get_chat()
-            chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
-            try:
-                await bot_client.send_message(MY_ID, "🔔 Keyword trovata: " + kw + "\n📢 Canale: " + chat_name + "\n\n" + text[:500])
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/list'))
+async def list_keywords(event):
+    if keywords:
+        kw_list = ', '.join(keywords)
+        await event.reply("Keyword attive: " + kw_list)
+    else:
+        await event.reply("Nessuna keyword attiva.")
+
+async def main():
+    global START_TIME
+    await user_client.start()
+    await bot_client.start(bot_token=BOT_TOKEN)
+    START_TIME = time.time()
+    print("Bot avviato! START_TIME: " + str(START_TIME))
+    await asyncio.gather(
+        user_client.run_until_disconnected(),
+        bot_client.run_until_disconnected()
+    )
+
+asyncio.run(main())
