@@ -25,7 +25,7 @@ keywords = load_keywords()
 user_client = TelegramClient('sessione', API_ID, API_HASH)
 bot_client = TelegramClient('bot', API_ID, API_HASH)
 
-@user_client.on(events.NewMessage)
+@user_client.on(events.NewMessage(func=lambda e: not e.out and e.date.timestamp() > __import__('time').time() - 30))
 async def monitor(event):
     if event.out:
         return
