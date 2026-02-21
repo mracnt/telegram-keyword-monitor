@@ -45,4 +45,39 @@ async def monitor(event):
             chat = await event.get_chat()
             chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
             try:
+                await bot_client.send_message(MY_ID, "Keyword trovata: " + kw + "\nCanale: " + chat_name + "\n\n" + text[:500])
+            except Exception as e:
+                print("Errore invio messaggio: " + str(e))
+
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/add (.+)'))
+async def add_keyword(event):
+    kw = event.pattern_match.group(1).strip()
+    if kw not in keywords:
+        keywords.append(kw)
+        save_keywords(keywords)
+        await event.reply("Keyword " + kw + " aggiunta!")
+    else:
+        await event.reply(kw + " e gia presente!")
+
+@bot_client.on(events.NewMessage(from_users=MY_ID, pattern='/remove (.+)'))
+async def remove_keyword(event):
+    kw = event.pattern_match.group(1).strip()
+    if kw in keywords:
+        keywords.remove(kw)
+        save_keywords(keywords)
+        await event.reply("Keyword " + kw + " rimossa!")
+    else:
+        await event.reply(kw + " non trovata!")
+
+@bot_client.on(events.NewMessage(from_users=    if event.sender_id == BOT_ID:
+        return
+    msg_time = event.date.timestamp()
+    if msg_time < START_TIME:
+        return
+    text = event.message.text or ''
+    for kw in keywords:
+        if kw.lower() in text.lower():
+            chat = await event.get_chat()
+            chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
+            try:
                 await bot_client.send_message(MY_ID, "🔔 Keyword trovata: " + kw + "\n📢 Canale: " + chat_name + "\n\n" + text[:500])
