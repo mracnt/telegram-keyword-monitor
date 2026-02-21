@@ -27,11 +27,10 @@ bot_client = TelegramClient('bot', API_ID, API_HASH)
 
 @user_client.on(events.NewMessage)
 async def monitor(event):
-    # Ignora messaggi del bot e messaggi in uscita
     if event.out:
         return
-    sender = await event.get_sender()
-    if sender and getattr(sender, 'bot', False):
+    # Ignora messaggi privati (inclusa chat col bot)
+    if event.is_private:
         return
     text = event.message.text or ''
     for kw in keywords:
