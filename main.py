@@ -45,5 +45,4 @@ async def monitor(event):
             chat = await event.get_chat()
             chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
             try:
-                await bot_client.send_message(MY_ID,
-                    f"🔔 Keyword trovata:
+                await bot_client.send_message(MY_ID, "🔔 Keyword trovata: " + kw + "\n📢 Canale: " + chat_name + "\n\n" + text[:500])
