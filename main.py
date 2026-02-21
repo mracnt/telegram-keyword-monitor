@@ -25,8 +25,14 @@ keywords = load_keywords()
 user_client = TelegramClient('sessione', API_ID, API_HASH)
 bot_client = TelegramClient('bot', API_ID, API_HASH)
 
-@user_client.on(events.NewMessage(func=lambda e: not e.out))
+@user_client.on(events.NewMessage)
 async def monitor(event):
+    # Ignora messaggi del bot e messaggi in uscita
+    if event.out:
+        return
+    sender = await event.get_sender()
+    if sender and getattr(sender, 'bot', False):
+        return
     text = event.message.text or ''
     for kw in keywords:
         if kw.lower() in text.lower():
@@ -34,10 +40,10 @@ async def monitor(event):
             chat_name = getattr(chat, 'title', getattr(chat, 'username', 'Sconosciuto'))
             try:
                 await bot_client.send_message(MY_ID, (
-                    f"🔔 *Keyword trovata:* `{kw}`\n"
-                    f"📢 *Canale:* {chat_name}\n\n"
+                    f"🔔 Keyword trovata: {kw}\n"
+                    f"📢 Canale: {chat_name}\n\n"
                     f"{text[:500]}"
-                ), parse_mode='markdown')
+                ))
             except Exception as e:
                 print(f"Errore invio messaggio: {e}")
 
